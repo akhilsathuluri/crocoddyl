@@ -30,6 +30,12 @@ struct ActivationBoundsTpl {
 
   ActivationBoundsTpl(const VectorXs& lower, const VectorXs& upper, const Scalar b = (Scalar)1.)
       : lb(lower), ub(upper), beta(b) {
+    
+    // Directly check the upper and lower bound inputs to verify
+    // std::cerr << "lower input \n" << lower << std::endl;
+    //           << "upper \n" << upper << std::endl;
+    // VERIFIED: Given inputs for upper and lower bounds are received here
+
     if (lb.size() != ub.size()) {
       throw_pretty("Invalid argument: "
                    << "The lower and upper bounds don't have the same dimension (lb,ub dimensions equal to " +
@@ -55,15 +61,36 @@ struct ActivationBoundsTpl {
         ub(i) = std::numeric_limits<Scalar>::max();
       }
     }
+    // actual function
+    // if (beta >= Scalar(0) && beta <= Scalar(1.)) {
+    //   VectorXs m = Scalar(0.5) * (lb + ub);
+    //   VectorXs d = Scalar(0.5) * (ub - lb);
+    //   lb = m - beta * d;
+    //   ub = m + beta * d;
+    //   // std::cerr << "m: \n" << m << std::endl;
+    //   // std::cerr << "d: \n" << d << std::endl;
+    //   // std::cerr << "lb: \n" << lb << std::endl;
+    //   // std::cerr << "ub: \n" << ub << std::endl;
+    // } else {
+    //   beta = Scalar(1.);
+    // }
 
+    // std::cerr << typeid(lb(0)).name() << std::endl;
+
+    // modified function
     if (beta >= Scalar(0) && beta <= Scalar(1.)) {
-      VectorXs m = Scalar(0.5) * (lb + ub);
-      VectorXs d = Scalar(0.5) * (ub - lb);
-      lb = m - beta * d;
-      ub = m + beta * d;
+      for (std::size_t i = 0; i < static_cast<std::size_t>(lb.size()); ++i) {
+        if (lb(i)!=(-std::numeric_limits<Scalar>::max()) && ub(i)!=(std::numeric_limits<Scalar>::max())){
+          double m = Scalar(0.5) * (lb(i) + ub(i));
+          double d = Scalar(0.5) * (ub(i) - lb(i));
+          lb(i) = m - beta * d;
+          ub(i) = m + beta * d;
+        }
+      } 
     } else {
       beta = Scalar(1.);
     }
+
   }
   ActivationBoundsTpl(const ActivationBoundsTpl& other) : lb(other.lb), ub(other.ub), beta(other.beta) {}
   ActivationBoundsTpl() : beta(Scalar(1.)) {}
@@ -107,6 +134,14 @@ class ActivationModelQuadraticBarrierTpl : public ActivationModelAbstractTpl<_Sc
     }
 
     boost::shared_ptr<Data> d = boost::static_pointer_cast<Data>(data);
+    
+    // std::cerr << "In ActivationQuadBar \n"
+    //           << "r: \n" << r << "\n"
+    //           << "bounds_.lb: \n" << bounds_.lb << "\n"
+    //           << "bounds_.ub: \n" << bounds_.ub << std::endl;
+    
+    // std::cerr << "bounds_.lb: \n" << bounds_.lb << std::endl;
+    // std::cerr << "bounds_.ub: \n" << bounds_.ub << std::endl;
 
     d->rlb_min_ = (r - bounds_.lb).array().min(Scalar(0.));
     d->rub_max_ = (r - bounds_.ub).array().max(Scalar(0.));
@@ -129,6 +164,7 @@ class ActivationModelQuadraticBarrierTpl : public ActivationModelAbstractTpl<_Sc
           pinocchio::internal::LE, r[i] - bounds_.lb[i], Scalar(0.), Scalar(1.),
           if_then_else(pinocchio::internal::GE, r[i] - bounds_.ub[i], Scalar(0.), Scalar(1.), Scalar(0.)));
     }
+    // std::cerr << "bounds_.lb: \n" << bounds_.lb << std::endl;
   };
 
   virtual boost::shared_ptr<ActivationDataAbstract> createData() {
