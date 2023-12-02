@@ -9,6 +9,9 @@
 #ifndef CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_BARRIER_HPP_
 #define CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_BARRIER_HPP_
 
+#include <typeinfo>
+
+
 #include <math.h>
 
 #include <pinocchio/utils/static-if.hpp>
@@ -32,11 +35,6 @@ struct ActivationBoundsTpl {
   ActivationBoundsTpl(const VectorXs& lower, const VectorXs& upper,
                       const Scalar b = (Scalar)1.)
       : lb(lower), ub(upper), beta(b) {
-    
-    // Directly check the upper and lower bound inputs to verify
-    // std::cerr << "lower input \n" << lower << std::endl;
-    //           << "upper \n" << upper << std::endl;
-    // VERIFIED: Given inputs for upper and lower bounds are received here
 
     if (lb.size() != ub.size()) {
       throw_pretty("Invalid argument: "
@@ -72,26 +70,27 @@ struct ActivationBoundsTpl {
     //   VectorXs d = Scalar(0.5) * (ub - lb);
     //   lb = m - beta * d;
     //   ub = m + beta * d;
-    //   // std::cerr << "m: \n" << m << std::endl;
-    //   // std::cerr << "d: \n" << d << std::endl;
-    //   // std::cerr << "lb: \n" << lb << std::endl;
-    //   // std::cerr << "ub: \n" << ub << std::endl;
+    //   std::cerr << "m: \n" << m << std::endl;
+    //   std::cerr << "d: \n" << d << std::endl;
+    //   std::cerr << "lb: \n" << typeid(lb).name() << std::endl;
+    //   std::cerr << "ub: \n" << typeid(ub).name() << std::endl;
     // } else {
     //   beta = Scalar(1.);
     // }
 
-    // std::cerr << typeid(lb(0)).name() << std::endl;
-
-    // modified function
+    // modified function    
     if (beta >= Scalar(0) && beta <= Scalar(1.)) {
       for (std::size_t i = 0; i < static_cast<std::size_t>(lb.size()); ++i) {
+        // do not use beta when one of the bounds is inf
         if (lb(i)!=(-std::numeric_limits<Scalar>::max()) && ub(i)!=(std::numeric_limits<Scalar>::max())){
-          double m = Scalar(0.5) * (lb(i) + ub(i));
-          double d = Scalar(0.5) * (ub(i) - lb(i));
+          Scalar m = Scalar(0.5) * (lb(i) + ub(i));
+          Scalar d = Scalar(0.5) * (ub(i) - lb(i));
           lb(i) = m - beta * d;
           ub(i) = m + beta * d;
         }
       } 
+      std::cerr << "lb: \n" << lb << std::endl;
+      std::cerr << "ub: \n" << lb << std::endl;
     } else {
       beta = Scalar(1.);
     }
