@@ -64,21 +64,7 @@ struct ActivationBoundsTpl {
         ub(i) = std::numeric_limits<Scalar>::max();
       }
     }
-    // actual function
-    // if (beta >= Scalar(0) && beta <= Scalar(1.)) {
-    //   VectorXs m = Scalar(0.5) * (lb + ub);
-    //   VectorXs d = Scalar(0.5) * (ub - lb);
-    //   lb = m - beta * d;
-    //   ub = m + beta * d;
-    //   std::cerr << "m: \n" << m << std::endl;
-    //   std::cerr << "d: \n" << d << std::endl;
-    //   std::cerr << "lb: \n" << typeid(lb).name() << std::endl;
-    //   std::cerr << "ub: \n" << typeid(ub).name() << std::endl;
-    // } else {
-    //   beta = Scalar(1.);
-    // }
 
-    // modified function    
     if (beta >= Scalar(0) && beta <= Scalar(1.)) {
       for (std::size_t i = 0; i < static_cast<std::size_t>(lb.size()); ++i) {
         // do not use beta when one of the bounds is inf
@@ -89,8 +75,6 @@ struct ActivationBoundsTpl {
           ub(i) = m + beta * d;
         }
       } 
-      std::cerr << "lb: \n" << lb << std::endl;
-      std::cerr << "ub: \n" << lb << std::endl;
     } else {
       beta = Scalar(1.);
     }

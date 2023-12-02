@@ -26,22 +26,9 @@ void test_activation_bounds_with_infinity() {
   lb[0] = 0;
   ub[0] = std::numeric_limits<double>::infinity();
 
-  // Eigen::VectorXd m = 0.5 * (lb + std::numeric_limits<Eigen::VectorXd>::max());
   Eigen::VectorXd m = 0.5 * (lb + Eigen::VectorXd::Constant(lb.size(), std::numeric_limits<double>::max()));
   Eigen::VectorXd d = 0.5 * (Eigen::VectorXd::Constant(lb.size(), std::numeric_limits<double>::max()) - lb);
-  // Eigen::VectorXd d = 0.5 * (std::numeric_limits<Eigen::VectorXd>::max() - lb);
-
   crocoddyl::ActivationBounds bounds(lb, ub, beta);
-
-  // std::cerr << "ub: \n" << ub << std::endl;
-  // std::cerr << "lb: \n" << lb << std::endl;
-  // std::cerr << "b.ub: \n" << bounds.ub << std::endl;
-  // std::cerr << "b.lb: \n" << bounds.lb << std::endl;
-  // std::cerr << "limit: \n" << std::numeric_limits<double>::max() << std::endl;
-  std::cerr << "m: \n" << m << std::endl;
-  std::cerr << "d: \n" << d << std::endl;
-  std::cerr << "comp: \n" << m[0] - beta * d[0] << std::endl;
-  
   BOOST_CHECK(bounds.lb !=  m - beta * d);
 }
 
