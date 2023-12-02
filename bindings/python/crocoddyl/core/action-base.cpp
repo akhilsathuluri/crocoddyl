@@ -132,15 +132,13 @@ void exposeActionAbstract() {
       .add_property("g_lb",
                     bp::make_function(&ActionModelAbstract_wrap::get_g_lb,
                                       bp::return_internal_reference<>()),
+                    &ActionModelAbstract_wrap::set_g_lb,
                     "lower bound of the inequality constraints")
       .add_property("g_ub",
                     bp::make_function(&ActionModelAbstract_wrap::get_g_ub,
                                       bp::return_internal_reference<>()),
+                    &ActionModelAbstract_wrap::set_g_ub,
                     "upper bound of the inequality constraints")
-      .add_property(
-          "has_control_limits",
-          bp::make_function(&ActionModelAbstract_wrap::get_has_control_limits),
-          "indicates whether problem has finite control limits")
       .add_property("u_lb",
                     bp::make_function(&ActionModelAbstract_wrap::get_u_lb,
                                       bp::return_internal_reference<>()),
@@ -149,12 +147,15 @@ void exposeActionAbstract() {
                     bp::make_function(&ActionModelAbstract_wrap::get_u_ub,
                                       bp::return_internal_reference<>()),
                     &ActionModelAbstract_wrap::set_u_ub, "upper control limits")
-      .def(CopyableVisitor<ActionModelAbstract_wrap>())
+      .add_property(
+          "has_control_limits",
+          bp::make_function(&ActionModelAbstract_wrap::get_has_control_limits),
+          "indicates whether problem has finite control limits")
       .def(PrintableVisitor<ActionModelAbstract>());
 
   bp::register_ptr_to_python<boost::shared_ptr<ActionDataAbstract> >();
 
-  bp::class_<ActionDataAbstract, boost::noncopyable>(
+  bp::class_<ActionDataAbstract>(
       "ActionDataAbstract",
       "Abstract class for action data.\n\n"
       "In crocoddyl, an action data contains all the required information for "
