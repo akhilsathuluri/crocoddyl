@@ -127,14 +127,6 @@ class ActivationModelQuadraticBarrierTpl
 
     boost::shared_ptr<Data> d = boost::static_pointer_cast<Data>(data);
     
-    // std::cerr << "In ActivationQuadBar \n"
-    //           << "r: \n" << r << "\n"
-    //           << "bounds_.lb: \n" << bounds_.lb << "\n"
-    //           << "bounds_.ub: \n" << bounds_.ub << std::endl;
-    
-    // std::cerr << "bounds_.lb: \n" << bounds_.lb << std::endl;
-    // std::cerr << "bounds_.ub: \n" << bounds_.ub << std::endl;
-
     d->rlb_min_ = (r - bounds_.lb).array().min(Scalar(0.));
     d->rub_max_ = (r - bounds_.ub).array().max(Scalar(0.));
     data->a_value = Scalar(0.5) * d->rlb_min_.matrix().squaredNorm() +
@@ -159,7 +151,6 @@ class ActivationModelQuadraticBarrierTpl
           if_then_else(pinocchio::internal::GE, r[i] - bounds_.ub[i],
                        Scalar(0.), Scalar(1.), Scalar(0.)));
     }
-    // std::cerr << "bounds_.lb: \n" << bounds_.lb << std::endl;
   };
 
   virtual boost::shared_ptr<ActivationDataAbstract> createData() {
