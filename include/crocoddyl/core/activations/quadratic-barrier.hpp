@@ -9,13 +9,11 @@
 #ifndef CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_BARRIER_HPP_
 #define CROCODDYL_CORE_ACTIVATIONS_QUADRATIC_BARRIER_HPP_
 
-#include <typeinfo>
-
-
 #include <math.h>
 
 #include <pinocchio/utils/static-if.hpp>
 #include <stdexcept>
+#include <typeinfo>
 
 #include "crocoddyl/core/activation-base.hpp"
 #include "crocoddyl/core/fwd.hpp"
@@ -35,7 +33,6 @@ struct ActivationBoundsTpl {
   ActivationBoundsTpl(const VectorXs& lower, const VectorXs& upper,
                       const Scalar b = (Scalar)1.)
       : lb(lower), ub(upper), beta(b) {
-
     if (lb.size() != ub.size()) {
       throw_pretty("Invalid argument: "
                    << "The lower and upper bounds don't have the same "
@@ -68,17 +65,17 @@ struct ActivationBoundsTpl {
     if (beta >= Scalar(0) && beta <= Scalar(1.)) {
       for (std::size_t i = 0; i < static_cast<std::size_t>(lb.size()); ++i) {
         // do not use beta when one of the bounds is inf
-        if (lb(i)!=(-std::numeric_limits<Scalar>::max()) && ub(i)!=(std::numeric_limits<Scalar>::max())){
+        if (lb(i) != (-std::numeric_limits<Scalar>::max()) &&
+            ub(i) != (std::numeric_limits<Scalar>::max())) {
           Scalar m = Scalar(0.5) * (lb(i) + ub(i));
           Scalar d = Scalar(0.5) * (ub(i) - lb(i));
           lb(i) = m - beta * d;
           ub(i) = m + beta * d;
         }
-      } 
+      }
     } else {
       beta = Scalar(1.);
     }
-
   }
   ActivationBoundsTpl(const ActivationBoundsTpl& other)
       : lb(other.lb), ub(other.ub), beta(other.beta) {}
