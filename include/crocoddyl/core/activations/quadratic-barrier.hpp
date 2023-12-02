@@ -123,7 +123,7 @@ class ActivationModelQuadraticBarrierTpl
     }
 
     boost::shared_ptr<Data> d = boost::static_pointer_cast<Data>(data);
-    
+
     d->rlb_min_ = (r - bounds_.lb).array().min(Scalar(0.));
     d->rub_max_ = (r - bounds_.ub).array().max(Scalar(0.));
     data->a_value = Scalar(0.5) * d->rlb_min_.matrix().squaredNorm() +
