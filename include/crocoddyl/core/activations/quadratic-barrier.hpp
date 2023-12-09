@@ -13,7 +13,6 @@
 
 #include <pinocchio/utils/static-if.hpp>
 #include <stdexcept>
-#include <typeinfo>
 
 #include "crocoddyl/core/activation-base.hpp"
 #include "crocoddyl/core/fwd.hpp"
