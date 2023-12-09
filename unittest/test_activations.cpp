@@ -11,8 +11,8 @@
 #define BOOST_TEST_NO_MAIN
 #define BOOST_TEST_ALTERNATIVE_INIT_API
 
-#include "crocoddyl/core/utils/exception.hpp"
 #include "crocoddyl/core/activations/quadratic-barrier.hpp"
+#include "crocoddyl/core/utils/exception.hpp"
 #include "factory/activation.hpp"
 #include "unittest_common.hpp"
 
@@ -109,7 +109,6 @@ void test_activation_bounds_with_infinity() {
   BOOST_CHECK(bounds.lb != m - beta * d);
 }
 
-
 //----------------------------------------------------------------------------//
 
 void register_unit_tests(ActivationModelTypes::Type activation_type) {
@@ -127,7 +126,8 @@ void register_unit_tests(ActivationModelTypes::Type activation_type) {
 
 bool register_bounds_unit_test() {
   boost::test_tools::output_test_stream test_name;
-  test_name << "test_" << "ActivationBoundsInfinity";
+  test_name << "test_"
+            << "ActivationBoundsInfinity";
   std::cout << "Running " << test_name.str() << std::endl;
   test_suite* ts = BOOST_TEST_SUITE(test_name.str());
   ts->add(BOOST_TEST_CASE(boost::bind(&test_activation_bounds_with_infinity)));

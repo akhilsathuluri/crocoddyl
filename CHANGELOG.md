@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-* Fixed handling of unbounded values for `ActivationBounds` in https://github.com/loco-3d/crocoddyl/pull/1191  
+* Fixed handling of unbounded values for `ActivationBounds` in https://github.com/loco-3d/crocoddyl/pull/1191
 
 ## [2.0.2] - 2023-12-07
 
