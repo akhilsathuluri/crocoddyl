@@ -34,6 +34,7 @@ include("${JRL_CMAKE_MODULES}/base.cmake")
 include("${JRL_CMAKE_MODULES}/boost.cmake")
 include("${JRL_CMAKE_MODULES}/apple.cmake")
 include("${JRL_CMAKE_MODULES}/stubs.cmake")
+include("${JRL_CMAKE_MODULES}/python-helpers.cmake")
 
 # Print initial message
 message(STATUS "${PROJECT_DESCRIPTION}, version ${PROJECT_VERSION}")
@@ -74,8 +75,6 @@ apply_default_apple_configuration()
 
 check_minimal_cxx_standard(14 ENFORCE)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/find-external/CppAD/"
-                      ${CMAKE_MODULE_PATH})
 if(APPLE) # Use the handmade approach
   set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/find-external/OpenMP
                         ${CMAKE_MODULE_PATH})
@@ -85,22 +84,20 @@ elseif(UNIX)
     set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/find-external/OpenMP
                           ${CMAKE_MODULE_PATH})
   endif()
-endif(APPLE)
+endif()
 
 # Add the different required and optional dependencies
 if(BUILD_PYTHON_INTERFACE)
-  add_project_dependency(eigenpy 2.8.0 REQUIRED PKG_CONFIG_REQUIRES
-                         "eigenpy >= 2.8.0")
-  # workaround temporary issue in submodule
-  include("${JRL_CMAKE_MODULES}/python.cmake")
+  add_project_dependency(eigenpy 3.1.4 REQUIRED PKG_CONFIG_REQUIRES
+                         "eigenpy >= 3.1.4")
 endif(BUILD_PYTHON_INTERFACE)
-add_project_dependency(pinocchio 2.6.3 REQUIRED PKG_CONFIG_REQUIRES
-                       "pinocchio >= 2.6.3")
+add_project_dependency(pinocchio 2.6.21 REQUIRED PKG_CONFIG_REQUIRES
+                       "pinocchio >= 2.6.21")
 if(BUILD_EXAMPLES
    OR BUILD_TESTING
    OR BUILD_BENCHMARK)
-  add_project_dependency(example-robot-data 4.0.7 REQUIRED PKG_CONFIG_REQUIRES
-                         "example-robot-data >= 4.0.7")
+  add_project_dependency(example-robot-data 4.0.9 REQUIRED PKG_CONFIG_REQUIRES
+                         "example-robot-data >= 4.0.9")
 else()
   add_optional_dependency(example-robot-data)
 endif()
@@ -144,7 +141,9 @@ if(BUILD_WITH_MULTITHREADS)
 endif()
 
 if(BUILD_WITH_CODEGEN_SUPPORT)
-  add_project_dependency(cppad 20200000.0 REQUIRED)
+  set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/find-external/CppAD/"
+                        ${CMAKE_MODULE_PATH})
+  add_project_dependency(cppad 20200000.0 REQUIRED FIND_EXTERNAL cppad)
   add_project_dependency(cppadcg 2.4.1 REQUIRED)
   add_definitions(-DCROCODDYL_WITH_CODEGEN)
   # Pinocchio codegen related preproccessor defs.
@@ -159,7 +158,7 @@ if(BUILD_WITH_CODEGEN_SUPPORT)
     set(PACKAGE_EXTRA_MACROS
         "${PACKAGE_EXTRA_MACROS}\nADD_DEFINITIONS(-DPINOCCHIO_CPPAD_REQUIRES_MATRIX_BASE_PLUGIN)"
     )
-  endif(NOT ${EIGEN3_VERSION} VERSION_GREATER "3.3.0")
+  endif()
 endif()
 
 # Add OpenMP
@@ -236,24 +235,24 @@ if(UNIX)
     TARGETS ${PROJECT_NAME}
     EXPORT ${TARGETS_EXPORT_NAME}
     DESTINATION lib)
-endif(UNIX)
+endif()
 
 # Build the Python interface
 if(BUILD_PYTHON_INTERFACE)
   # Include and add the bindings directory
   include_directories(bindings)
   add_subdirectory(bindings)
-endif(BUILD_PYTHON_INTERFACE)
+endif()
 
 # Build the unit tests
 if(BUILD_TESTING)
   add_subdirectory(unittest)
-endif(BUILD_TESTING)
+endif()
 
 # Build the benchmark
 if(BUILD_BENCHMARK)
   add_subdirectory(benchmark)
-endif(BUILD_BENCHMARK)
+endif()
 
 # Build the examples
 if(BUILD_EXAMPLES)
@@ -263,7 +262,7 @@ if(BUILD_EXAMPLES)
     message(
       WARNING "Python interface is not built, hence cannot build examples.")
   endif(BUILD_PYTHON_INTERFACE)
-endif(BUILD_EXAMPLES)
+endif()
 
 # PkgConfig packaging of the project
 pkg_config_append_libs(${PROJECT_NAME})
