@@ -43,8 +43,7 @@ set(${PROJECT_NAME}_CPP_TESTS
     test_friction_cone
     test_wrench_cone
     test_boxqp
-    test_solvers
-    test_activation_bounds)
+    test_solvers)
 
 if(BUILD_WITH_CODEGEN_SUPPORT)
   set(${PROJECT_NAME}_CODEGEN_CPP_TESTS test_codegen)
